@@ -11,9 +11,9 @@ export default function List({ items }: { items: Item[] }) {
       {
         id: state.length + 1,
         text: newItemText as string,
-        sending: true
-      }
-    ]
+        sending: true,
+      },
+    ],
   );
 
   async function formAction(formData: FormData) {

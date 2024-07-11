@@ -13,7 +13,10 @@ export async function saveAction(formData: FormData) {
   let text = formData.get("item") as string;
   const result = ItemSchema.safeParse({ text });
   if (!result.success) {
-    return { success: false, errors: result.error.errors.map(e => e.message) };
+    return {
+      success: false,
+      errors: result.error.errors.map((e) => e.message),
+    };
   }
   await sql`
       INSERT INTO itemsList (text)
