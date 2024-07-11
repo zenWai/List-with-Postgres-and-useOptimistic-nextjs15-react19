@@ -1,7 +1,13 @@
-export default function Home() {
+import List from "@/app/components/list";
+import { getItems } from "@/app/db";
+
+export default async function HomePage() {
+  const items = await getItems();
+
   return (
-    <main>
-      <div>Hello world!</div>
-    </main>
+    <>
+      <h1>List</h1>
+      <List items={items} />
+    </>
   );
 }
