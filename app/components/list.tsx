@@ -1,6 +1,7 @@
 "use client";
 import { useOptimistic } from "react";
 import { saveAction } from "@/app/actions";
+import { toast } from "sonner";
 
 export default function List({ items }: { items: Item[] }) {
   const [optimisticItems, addOptimisticItem] = useOptimistic(
@@ -16,10 +17,16 @@ export default function List({ items }: { items: Item[] }) {
   );
 
   async function formAction(formData: FormData) {
-    const newItem = formData.get("item");
-    if (newItem) {
-      addOptimisticItem(newItem);
-      await saveAction(formData);
+    const newItem = formData.get("item") as string;
+    console.log(typeof newItem); // string
+
+    addOptimisticItem(newItem);
+    const result = await saveAction(formData);
+    if (result.success) {
+      toast.success(`( ${newItem.toString()} ) added successfully 👍`);
+    } else {
+      const message = result.errors ?? "";
+      toast.error(`Could not save ${message[0]} - Please Try again`);
     }
   }
 
