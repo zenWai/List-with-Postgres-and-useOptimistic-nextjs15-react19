@@ -10,6 +10,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       className="toaster group"
       toastOptions={{
+        closeButton: true,
         classNames: {
           success: "bg-green-500 text-white", // Custom class for success messages
           error: "bg-red-500 text-white", // Custom class for error messages
