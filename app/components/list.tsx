@@ -1,4 +1,5 @@
 "use client";
+import { AddButton } from "@/app/components/add-button";
 import { useOptimistic } from "react";
 import { saveAction } from "@/app/actions";
 import { toast } from "sonner";
@@ -34,7 +35,7 @@ export default function List({ items }: { items: Item[] }) {
     <>
       <form action={formAction}>
         <input type="text" name="item" placeholder="add new item to list" />
-        <button type="submit">Add</button>
+        <AddButton/>
       </form>
       <ul>
         {optimisticItems.map((item, index) => (
