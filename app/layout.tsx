@@ -1,6 +1,6 @@
-import { Toaster } from "@/app/components/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import "./globals.css";
+import "../styles/globals.css";
 import type React from "react";
 
 export const metadata: Metadata = {

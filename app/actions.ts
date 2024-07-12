@@ -4,13 +4,16 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const ItemSchema = z.object({
-  text: z.string().min(1, "Item text is required"),
+  text: z
+    .string()
+    .min(1, "Item text is required")
+    .max(255, "Item text must be less than 255 characters"),
 });
 
 const IdSchema = z.number().positive().int();
 
 export async function saveAction(formData: FormData) {
-  //await new Promise((res) => setTimeout(res, 1000));
+  await new Promise((res) => setTimeout(res, 2000));
   let text = formData.get("item") as string;
   const result = ItemSchema.safeParse({ text });
   if (!result.success) {
@@ -20,7 +23,7 @@ export async function saveAction(formData: FormData) {
     };
   }
   await sql`
-      INSERT INTO itemsList (text)
+      INSERT INTO itemslist (text)
       VALUES (${result.data.text});
   `;
   revalidatePath("/");
@@ -28,6 +31,7 @@ export async function saveAction(formData: FormData) {
 }
 
 export async function deleteAction(id: number) {
+  await new Promise((res) => setTimeout(res, 2000));
   const result = IdSchema.safeParse(id);
   if (!result.success) {
     return {
@@ -36,7 +40,7 @@ export async function deleteAction(id: number) {
     };
   }
   const deleteResult = await sql`
-    DELETE FROM itemsList WHERE id = ${result.data};
+    DELETE FROM itemslist WHERE id = ${result.data};
   `;
 
   if (deleteResult.count === 0) {
@@ -47,9 +51,9 @@ export async function deleteAction(id: number) {
 }
 
 export async function updateAction(id: number, formData: FormData) {
-  //await new Promise((res) => setTimeout(res, 10000));
+  await new Promise((res) => setTimeout(res, 2000));
   const idResult = IdSchema.safeParse(id);
-  const text = formData.get("updateId") as string;
+  const text = formData.get("updateText") as string;
   const textResult = ItemSchema.safeParse({ text });
 
   if (!idResult.success || !textResult.success) {
@@ -65,7 +69,7 @@ export async function updateAction(id: number, formData: FormData) {
   }
 
   await sql`
-    UPDATE itemsList SET text = ${textResult.data.text} WHERE id = ${id};
+    UPDATE itemslist SET text = ${textResult.data.text} WHERE id = ${id};
   `;
 
   revalidatePath("/");
