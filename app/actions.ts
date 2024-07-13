@@ -1,5 +1,5 @@
 "use server";
-import { sql } from "@/app/db";
+import { ensureUserExists, sql } from "@/app/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -12,7 +12,8 @@ const ItemSchema = z.object({
 
 const IdSchema = z.number().positive().int();
 
-export async function saveAction(formData: FormData) {
+export async function saveAction(formData: FormData, userId: string) {
+  await ensureUserExists(userId);
   await new Promise((res) => setTimeout(res, 2000));
   let text = formData.get("item") as string;
   const result = ItemSchema.safeParse({ text });
@@ -23,14 +24,14 @@ export async function saveAction(formData: FormData) {
     };
   }
   await sql`
-      INSERT INTO itemslist (text)
-      VALUES (${result.data.text});
+      INSERT INTO itemslist (user_id, text)
+      VALUES (${userId}, ${result.data.text});
   `;
   revalidatePath("/");
   return { success: true, message: "Item added successfully" };
 }
 
-export async function deleteAction(id: number) {
+export async function deleteAction(id: number, userId: string) {
   await new Promise((res) => setTimeout(res, 2000));
   const result = IdSchema.safeParse(id);
   if (!result.success) {
@@ -40,7 +41,7 @@ export async function deleteAction(id: number) {
     };
   }
   const deleteResult = await sql`
-    DELETE FROM itemslist WHERE id = ${result.data};
+    DELETE FROM itemslist WHERE id = ${result.data} AND user_id = ${userId};
   `;
 
   if (deleteResult.count === 0) {
@@ -50,7 +51,11 @@ export async function deleteAction(id: number) {
   return { success: true, message: "Item deleted successfully" };
 }
 
-export async function updateAction(id: number, formData: FormData) {
+export async function updateAction(
+  id: number,
+  formData: FormData,
+  userId: string,
+) {
   await new Promise((res) => setTimeout(res, 2000));
   const idResult = IdSchema.safeParse(id);
   const text = formData.get("updateText") as string;
@@ -69,7 +74,7 @@ export async function updateAction(id: number, formData: FormData) {
   }
 
   await sql`
-    UPDATE itemslist SET text = ${textResult.data.text} WHERE id = ${id};
+    UPDATE itemslist SET text = ${textResult.data.text} WHERE id = ${id} AND user_id = ${userId};
   `;
 
   revalidatePath("/");

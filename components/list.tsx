@@ -6,7 +6,12 @@ import { useOptimistic, useState, useTransition } from "react";
 import { deleteAction, saveAction, updateAction } from "@/app/actions";
 import { toast } from "sonner";
 
-export default function List({ items }: { items: Item[] }) {
+interface ListProps {
+  items: Item[];
+  userId: string;
+}
+
+export default function List({ items, userId }: ListProps) {
   const [isPending, startTransition] = useTransition();
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>("");
@@ -32,11 +37,12 @@ export default function List({ items }: { items: Item[] }) {
     console.log(typeof newItem); // string
     const optimisticItem = {
       id: optimisticItems.length + 1,
+      user_id: userId,
       text: newItem,
       sending: true,
     };
     setOptimisticItems({ action: "add", item: optimisticItem });
-    const result = await saveAction(formData);
+    const result = await saveAction(formData, userId);
     if (result.success) {
       toast.success(`( ${newItem.toString()} ) added successfully 👍`);
     } else {
@@ -50,11 +56,12 @@ export default function List({ items }: { items: Item[] }) {
       const optimisticItem = {
         id: id,
         text: "",
+        user_id: userId,
         sending: false,
       };
       setOptimisticItems({ action: "delete", item: optimisticItem });
     });
-    const result = await deleteAction(id);
+    const result = await deleteAction(id, userId);
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -68,13 +75,14 @@ export default function List({ items }: { items: Item[] }) {
     startTransition(() => {
       const optimisticItem = {
         id: itemId!,
+        user_id: userId,
         text,
         sending: true,
       };
       setOptimisticItems({ action: "update", item: optimisticItem });
     });
 
-    const result = await updateAction(itemId ?? -1, formData);
+    const result = await updateAction(itemId ?? -1, formData, userId);
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -115,6 +123,9 @@ export default function List({ items }: { items: Item[] }) {
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 auto-rows-min">
+        {!optimisticItems?.length && (
+          <div>Nothing to see here, unless you add some items.</div>
+        )}
         {optimisticItems.map((item, index) => (
           <ItemOfList
             key={index}

@@ -33,7 +33,7 @@ export function ItemOfList({
     <div className="group flex flex-col items-start gap-2 rounded-lg border bg-background p-4 transition-colors duration-300 hover:bg-muted hover:scale-105 h-full">
       <div className="flex w-full items-start justify-between">
         <div className="flex items-start gap-2 flex-1">
-          <Avatar className="h-6 w-6 flex-shrink-0">
+          <Avatar className="h-8 w-8 flex-shrink-0">
             <AvatarImage src="/placeholder-avatar.jpg" />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
@@ -80,24 +80,24 @@ export function ItemOfList({
           )}
         </div>
         {!isEditing && (
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-start gap-2 flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-muted/50 transition-colors duration-300"
+              className="hover:bg-muted/50 hover:scale-105 transition-colors duration-300 items-start"
               onClick={onEdit}
               disabled={isSending}
             >
-              <FilePenIcon className="h-4 w-4" />
+              <FilePenIcon className="h-6 w-6" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-muted/50 transition-colors duration-300"
+              className="hover:bg-muted/50 hover:scale-110 transition-colors duration-300 items-start"
               onClick={onDelete}
               disabled={isSending}
             >
-              <TrashIcon className="h-4 w-4" />
+              <TrashIcon className="h-6 w-6" />
             </Button>
           </div>
         )}
