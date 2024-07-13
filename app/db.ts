@@ -7,7 +7,7 @@ export const sql = postgres(process.env.POSTGRES_URL as string, {
 
 export async function initializeDB() {
   await sql`
-    CREATE TABLE IF NOT EXISTS itemsList (
+    CREATE TABLE IF NOT EXISTS itemslist (
       id SERIAL PRIMARY KEY,
       text VARCHAR(255) NOT NULL
     );
@@ -18,7 +18,7 @@ export async function getItems() {
   await initializeDB();
   //await new Promise((res) => setTimeout(res, 1000));
   const items = await sql<Item[]>`
-      SELECT id, text FROM itemsList;
+      SELECT id, text FROM itemslist;
   `;
   return items;
 }
