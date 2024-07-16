@@ -1,12 +1,12 @@
+import { uuidValidateV4 } from "@/utils/uuidValidate";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
 export default async function middleware(request: NextRequest) {
-  const userId = request.cookies.get("userId");
+  const userId = request.cookies.get("userId")?.value;
   const res = NextResponse.next();
-
-  if (!userId) {
+  if (!userId || !uuidValidateV4(userId)) {
     const id = uuidv4();
     res.cookies.set("userId", id);
   }
@@ -26,7 +26,6 @@ export const config = {
      */
     {
       source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
-      missing: [{ type: "cookie", key: "userId" }],
     },
   ],
 };
