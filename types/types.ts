@@ -1,6 +1,12 @@
 interface Item {
   id: number;
   text: string;
-  user_id: string;
   sending?: boolean;
+  created_at: Date | string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  created_at: Date | string;
 }

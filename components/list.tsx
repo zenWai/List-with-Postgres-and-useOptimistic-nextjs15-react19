@@ -6,18 +6,19 @@ import { useOptimistic, useState, useTransition } from "react";
 import { deleteAction, saveAction, updateAction } from "@/app/actions";
 import { toast } from "sonner";
 
-interface ListProps {
+type ListProps = {
   items: Item[];
-  userId: string;
-}
+  user: User;
+};
 
-export default function List({ items, userId }: ListProps) {
+export default function List({ items, user }: ListProps) {
   const [isPending, startTransition] = useTransition();
-  const [editingItemId, setEditingItemId] = useState<number | null>(null);
+  const [editingItem, setEditingItem] = useState<Item | null>();
   const [editingText, setEditingText] = useState<string>("");
+  //const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const [optimisticItems, setOptimisticItems] = useOptimistic(
-    items.sort((a, b) => a.id - b.id) || [],
+    items || [],
     (state, { action, item }: { action: string; item: Item }) => {
       switch (action) {
         case "delete":
@@ -37,17 +38,18 @@ export default function List({ items, userId }: ListProps) {
     console.log(typeof newItem); // string
     const optimisticItem = {
       id: optimisticItems.length + 1,
-      user_id: userId,
+      user_id: user.id,
       text: newItem,
       sending: true,
+      created_at: "",
     };
     setOptimisticItems({ action: "add", item: optimisticItem });
-    const result = await saveAction(formData, userId);
+    const result = await saveAction(formData, user.id);
     if (result.success) {
       toast.success(`( ${newItem.toString()} ) added successfully 👍`);
     } else {
-      const message = result.errors ?? "";
-      toast.error(`Could not save ${message[0]} - Please Try again`);
+      const errorMessage = result.errors;
+      toast.error(`Could not save ${errorMessage} - Please Try again`);
     }
   }
 
@@ -56,40 +58,44 @@ export default function List({ items, userId }: ListProps) {
       const optimisticItem = {
         id: id,
         text: "",
-        user_id: userId,
+        user_id: user.id,
         sending: false,
+        created_at: "",
       };
       setOptimisticItems({ action: "delete", item: optimisticItem });
     });
-    const result = await deleteAction(id, userId);
+    const result = await deleteAction(id, user.id);
     if (result.success) {
       toast.success(result.message);
     } else {
-      toast.error(result.message);
+      const errorMessage = result.errors;
+      toast.error(`Could not delete ${errorMessage} - Please Try again`);
     }
   }
 
   async function updateActionWithId(formData: FormData) {
     const text = formData.get("updateText") as string;
-    const itemId = editingItemId;
+    const item = editingItem;
+    if (!item?.id) return;
     startTransition(() => {
       const optimisticItem = {
-        id: itemId!,
-        user_id: userId,
+        id: item.id,
+        user_id: user.id,
         text,
+        created_at: item?.created_at ?? "",
         sending: true,
       };
       setOptimisticItems({ action: "update", item: optimisticItem });
     });
 
-    const result = await updateAction(itemId ?? -1, formData, userId);
+    const result = await updateAction(item.id, formData, user.id);
     if (result.success) {
       toast.success(result.message);
     } else {
-      toast.error(result.errors?.join(", "));
+      const errorMessage = result.errors;
+      toast.error(`Could not update ${errorMessage} - Please Try again`);
     }
-    console.log(result);
-    setEditingItemId(null);
+    setEditingItem(null);
     setEditingText("");
   }
   //const updateActionWithId = (id:number) => updateAction.bind(null, id);
@@ -98,7 +104,7 @@ export default function List({ items, userId }: ListProps) {
     <div className="flex flex-col gap-8 p-6 sm:p-8">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold">Hello User X</h1>
+          <h1 className="text-2xl font-bold">Hello User {user.name}</h1>
           <h2>Server has an artificial delay of 2 seconds</h2>
           <p>{`await new Promise((res) => setTimeout(res, 2000)); on top of every action`}</p>
           <p>Enjoy the lag!</p>
@@ -122,30 +128,33 @@ export default function List({ items, userId }: ListProps) {
           </form>
         </div>
       </div>
+      {!optimisticItems?.length && (
+        <div className="flex flex-center justify-center contain-content bg-gray-600/15 mx-auto text-5xl text-green-700 py-2 px-2">
+          No items available, please Add some items
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 auto-rows-min">
-        {!optimisticItems?.length && (
-          <div>Nothing to see here, unless you add some items.</div>
-        )}
         {optimisticItems.map((item, index) => (
           <ItemOfList
             key={index}
             item={{
               id: item.id,
               name: item.text,
+              created_at: item.created_at as string,
             }}
             onEdit={() => {
-              setEditingItemId(item.id);
+              setEditingItem(item);
               setEditingText(item.text);
             }}
             onDelete={() => handleDelete(item.id)}
             isSending={!!item.sending}
-            isEditing={editingItemId === item.id}
+            isEditing={editingItem?.id === item.id}
             onEditChange={(e) => {
               setEditingText(e.target.value);
             }}
             onSaveEdit={updateActionWithId}
             onCancelEdit={() => {
-              setEditingItemId(null);
+              setEditingItem(null);
               setEditingText("");
             }}
             editingText={editingText}

@@ -7,6 +7,7 @@ interface ItemProps {
   item: {
     id: number;
     name: string;
+    created_at: string;
   };
   onEdit: () => void;
   onDelete: () => void;
@@ -101,6 +102,9 @@ export function ItemOfList({
             </Button>
           </div>
         )}
+      </div>
+      <div className="item-end right-auto text-xs">
+        {item.created_at && `Created: ${item.created_at}`}
       </div>
     </div>
   );
