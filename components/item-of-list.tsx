@@ -27,7 +27,7 @@ export function ItemOfList({
   editingText,
 }: ItemProps) {
   return (
-    <div className="group flex flex-col items-start gap-2 rounded-lg border bg-background p-4 transition-colors duration-300 hover:bg-muted hover:scale-105 h-full">
+    <div className="group flex flex-col items-start gap-2 rounded-lg border p-4 transition-colors duration-300 hover:bg-muted hover:scale-105 h-full">
       <div className="flex w-full items-start justify-between">
         <div className="flex items-start gap-2 flex-1">
           <Avatar className="h-8 w-8 flex-shrink-0">

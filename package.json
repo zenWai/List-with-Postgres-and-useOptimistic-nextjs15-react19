@@ -21,6 +21,7 @@
     "@types/react-dom": "npm:types-react-dom@rc",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^11.3.6",
     "lucide-react": "^0.407.0",
     "next": "15.0.0-rc.0",
     "postgres": "^3.4.4",

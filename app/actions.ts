@@ -8,6 +8,7 @@ type ItemsActionsResult = {
   success: boolean;
   message?: string;
   errors?: string;
+  savedItem?: { id: number };
 };
 type SaveItemType = z.infer<typeof SaveItemSchema>;
 type UpdateItemType = z.infer<typeof UpdateItemSchema>;
@@ -55,18 +56,23 @@ export async function saveAction(
   if (!validatedData) {
     return { success: false, errors: "Could not save item - unknown" };
   }
-
+  let savedItem;
   try {
-    await sql`
+    [savedItem] = await sql`
         INSERT INTO itemslist (user_id, text)
-        VALUES (${validatedData.userId}, ${validatedData.text});
+        VALUES (${validatedData.userId}, ${validatedData.text})
+        RETURNING id;
     `;
   } catch {
     throw new Error("Error adding to the database");
   }
 
   revalidatePath("/");
-  return { success: true, message: "Item added successfully" };
+  return {
+    success: true,
+    message: "Item added successfully",
+    savedItem: savedItem.id,
+  };
 }
 
 export async function deleteAction(
