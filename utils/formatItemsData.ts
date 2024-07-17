@@ -23,12 +23,12 @@ function sortBy(
     case "newest":
       return items.sort(
         (a, b) =>
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
     case "oldest":
       return items.sort(
         (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       );
     default:
       return;
@@ -50,6 +50,8 @@ export async function formatItems(
   // Handle sorting options
   if (sortByTerm) {
     formattedItems = sortBy(formattedItems, sortByTerm) ?? formattedItems;
+  } else {// default sort by "newest"
+    formattedItems = sortBy(formattedItems, "newest") ?? formattedItems;
   }
 
   return formattedItems;

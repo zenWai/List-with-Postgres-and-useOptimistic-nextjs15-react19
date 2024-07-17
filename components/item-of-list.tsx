@@ -76,28 +76,26 @@ export function ItemOfList({
             </div>
           )}
         </div>
-        {!isEditing && (
-          <div className="flex items-start gap-2 flex-shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-muted/50 hover:scale-105 transition-colors duration-300 items-start"
-              onClick={onEdit}
-              disabled={isSending}
-            >
-              <FilePenIcon className="h-6 w-6" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-muted/50 hover:scale-110 transition-colors duration-300 items-start"
-              onClick={onDelete}
-              disabled={isSending}
-            >
-              <TrashIcon className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
+        <div className="flex items-start gap-2 flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-muted/50 hover:scale-105 transition-colors duration-300 items-start"
+            onClick={onEdit}
+            disabled={isSending}
+          >
+            <FilePenIcon className="h-6 w-6" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-muted/50 hover:scale-110 transition-colors duration-300 items-start"
+            onClick={onDelete}
+            disabled={isSending}
+          >
+            <TrashIcon className="h-6 w-6" />
+          </Button>
+        </div>
       </div>
       <div className="item-end right-auto text-xs">
         {`Created: ${item.formatted_date}`}

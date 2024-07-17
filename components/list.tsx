@@ -24,7 +24,7 @@ export default function List({ items, user }: ListProps) {
         case "delete":
           return state.filter(({ id }) => id !== item.id);
         case "add":
-          return [...state, item];
+          return [item, ...state];
         case "update":
           return state.map((t) => (t.id === item.id ? item : t));
         case "a-z":
@@ -34,14 +34,14 @@ export default function List({ items, user }: ListProps) {
         case "newest":
           return state.sort(
             (a, b) =>
-              new Date(a.created_at).getTime() -
-              new Date(b.created_at).getTime(),
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
           );
         case "oldest":
           return state.sort(
             (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime(),
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime(),
           );
         default:
           return state;
