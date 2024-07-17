@@ -33,4 +33,15 @@ The goal of this app is to create an experience that simulates a client-side app
   <li>
     🛡️ Error handling throughout the application.
   </li>
+  <li>
+    📏 Zod for schema and data validation.
+  </li>
 </ul>
+
+# Run locally
+
+```
+Add your POSTGRES_URL= in a .env, follow the .env.example
+POSTGRES_URL="postgres://default:xxx@xxx:PORT/xxx?sslmode=require"
+```
+
