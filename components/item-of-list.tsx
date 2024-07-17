@@ -4,11 +4,7 @@ import { FilePenIcon } from "@/components/ui/icons/file-pen-icon";
 import { TrashIcon } from "@/components/ui/icons/trash-icon";
 
 interface ItemProps {
-  item: {
-    id: number;
-    name: string;
-    created_at: string;
-  };
+  item: FormattedItem;
   onEdit: () => void;
   onDelete: () => void;
   isSending: boolean;
@@ -75,7 +71,7 @@ export function ItemOfList({
               className="flex-1 text-sm font-medium break-words overflow-hidden"
               style={{ wordBreak: "break-word" }}
             >
-              <span className="">{item.name}</span>
+              <span className="">{item.text}</span>
               {isSending && <small>(Saving...)</small>}
             </div>
           )}
@@ -104,7 +100,7 @@ export function ItemOfList({
         )}
       </div>
       <div className="item-end right-auto text-xs">
-        {item.created_at && `Created: ${item.created_at}`}
+        {`Created: ${item.formatted_date}`}
       </div>
     </div>
   );
