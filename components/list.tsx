@@ -14,6 +14,7 @@ import {
 } from "react";
 import { deleteAction, saveAction, updateAction } from "@/app/actions";
 import { toast } from "sonner";
+import { AnimatePresence, motion } from "framer-motion";
 
 type ListProps = {
   items: FormattedItem[];
@@ -26,6 +27,7 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
   const [editingItem, setEditingItem] = useState<FormattedItem | null>();
   const [editingText, setEditingText] = useState<string>("");
   const [delayEnabled, setDelayEnabled] = useState(isDelayEnabled);
+  const [recentlyUpdated, setRecentlyUpdated] = useState<string>("");
 
   const router = useRouter();
   const pathname = usePathname();
@@ -72,7 +74,6 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
 
   async function formAction(formData: FormData) {
     const newItem = formData.get("item") as string;
-    console.log(typeof newItem); // string
     const optimisticItem = {
       id: optimisticItems.length + 1,
       user_id: user.id,
@@ -85,6 +86,9 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
     const result = await saveAction(formData, user.id, delayEnabled);
     if (result.success) {
       toast.success(`( ${newItem.toString()} ) added successfully 👍`);
+      //TODO: Bg Color Change works for consequent adding after the first
+      setRecentlyUpdated(result.savedItem?.toString() ?? "");
+      setTimeout(() => setRecentlyUpdated(""), 5000);
     } else {
       const errorMessage = result.errors;
       toast.error(`Could not save ${errorMessage} - Please Try again`);
@@ -130,6 +134,8 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
 
     const result = await updateAction(item.id, formData, user.id, delayEnabled);
     if (result.success) {
+      setRecentlyUpdated(item.id.toString());
+      setTimeout(() => setRecentlyUpdated(""), 5000);
       toast.success(result.message);
     } else {
       const errorMessage = result.errors;
@@ -138,8 +144,6 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
     setEditingItem(null);
     setEditingText("");
   }
-
-  //const updateActionWithId = (id:number) => updateAction.bind(null, id);
 
   const handleSort = useCallback(
     ({ sortByTerm }: { sortByTerm: string }) => {
@@ -208,28 +212,40 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
         </div>
       )}
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 auto-rows-min">
-        {optimisticItems.map((item, index) => (
-          <ItemOfList
-            key={index}
-            item={item}
-            onEdit={() => {
-              setEditingItem(item);
-              setEditingText(item.text);
-            }}
-            onDelete={() => handleDelete(item.id)}
-            isSending={!!item.sending}
-            isEditing={editingItem?.id === item.id}
-            onEditChange={(e) => {
-              setEditingText(e.target.value);
-            }}
-            onSaveEdit={updateActionWithId}
-            onCancelEdit={() => {
-              setEditingItem(null);
-              setEditingText("");
-            }}
-            editingText={editingText}
-          />
-        ))}
+        <AnimatePresence>
+          {optimisticItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              layout
+              transition={{ duration: 0.7 }}
+              style={{
+                backgroundColor:
+                  recentlyUpdated === item.id.toString() ? "#FFD700" : "white",
+              }}
+            >
+              <ItemOfList
+                key={index}
+                item={item}
+                onEdit={() => {
+                  setEditingItem(item);
+                  setEditingText(item.text);
+                }}
+                onDelete={() => handleDelete(item.id)}
+                isSending={!!item.sending}
+                isEditing={editingItem?.id === item.id}
+                onEditChange={(e) => {
+                  setEditingText(e.target.value);
+                }}
+                onSaveEdit={updateActionWithId}
+                onCancelEdit={() => {
+                  setEditingItem(null);
+                  setEditingText("");
+                }}
+                editingText={editingText}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );
