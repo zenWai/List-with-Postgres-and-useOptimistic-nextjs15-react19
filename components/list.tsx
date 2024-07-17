@@ -1,25 +1,25 @@
 "use client";
 import { ItemOfList } from "@/components/item-of-list";
+import { SortSelect } from "@/components/sort-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useOptimistic, useState, useTransition } from "react";
+import { useCallback, useOptimistic, useState, useTransition } from "react";
 import { deleteAction, saveAction, updateAction } from "@/app/actions";
 import { toast } from "sonner";
 
 type ListProps = {
-  items: Item[];
+  items: FormattedItem[];
   user: User;
 };
 
 export default function List({ items, user }: ListProps) {
   const [isPending, startTransition] = useTransition();
-  const [editingItem, setEditingItem] = useState<Item | null>();
+  const [editingItem, setEditingItem] = useState<FormattedItem | null>();
   const [editingText, setEditingText] = useState<string>("");
-  //const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const [optimisticItems, setOptimisticItems] = useOptimistic(
     items || [],
-    (state, { action, item }: { action: string; item: Item }) => {
+    (state, { action, item }: { action: string; item: FormattedItem }) => {
       switch (action) {
         case "delete":
           return state.filter(({ id }) => id !== item.id);
@@ -27,6 +27,22 @@ export default function List({ items, user }: ListProps) {
           return [...state, item];
         case "update":
           return state.map((t) => (t.id === item.id ? item : t));
+        case "a-z":
+          return state.sort((a, b) => a.text.localeCompare(b.text));
+        case "z-a":
+          return state.sort((a, b) => b.text.localeCompare(a.text));
+        case "newest":
+          return state.sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime(),
+          );
+        case "oldest":
+          return state.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          );
         default:
           return state;
       }
@@ -41,6 +57,7 @@ export default function List({ items, user }: ListProps) {
       user_id: user.id,
       text: newItem,
       sending: true,
+      formatted_date: "",
       created_at: "",
     };
     setOptimisticItems({ action: "add", item: optimisticItem });
@@ -60,6 +77,7 @@ export default function List({ items, user }: ListProps) {
         text: "",
         user_id: user.id,
         sending: false,
+        formatted_date: "",
         created_at: "",
       };
       setOptimisticItems({ action: "delete", item: optimisticItem });
@@ -82,7 +100,8 @@ export default function List({ items, user }: ListProps) {
         id: item.id,
         user_id: user.id,
         text,
-        created_at: item?.created_at ?? "",
+        formatted_date: item.formatted_date,
+        created_at: item.created_at,
         sending: true,
       };
       setOptimisticItems({ action: "update", item: optimisticItem });
@@ -99,6 +118,25 @@ export default function List({ items, user }: ListProps) {
     setEditingText("");
   }
   //const updateActionWithId = (id:number) => updateAction.bind(null, id);
+
+  const handleSort = useCallback(
+    ({ sortByTerm }: { sortByTerm: string }) => {
+      startTransition(() => {
+        switch (sortByTerm) {
+          case "a-z":
+          case "z-a":
+          case "newest":
+          case "oldest":
+            // @ts-ignore
+            setOptimisticItems({ action: sortByTerm });
+            break;
+          default:
+            return;
+        }
+      });
+    },
+    [startTransition],
+  );
 
   return (
     <div className="flex flex-col gap-8 p-6 sm:p-8">
@@ -128,6 +166,7 @@ export default function List({ items, user }: ListProps) {
           </form>
         </div>
       </div>
+      <SortSelect onSort={handleSort} />
       {!optimisticItems?.length && (
         <div className="flex flex-center justify-center contain-content bg-gray-600/15 mx-auto text-5xl text-green-700 py-2 px-2">
           No items available, please Add some items
@@ -137,11 +176,7 @@ export default function List({ items, user }: ListProps) {
         {optimisticItems.map((item, index) => (
           <ItemOfList
             key={index}
-            item={{
-              id: item.id,
-              name: item.text,
-              created_at: item.created_at as string,
-            }}
+            item={item}
             onEdit={() => {
               setEditingItem(item);
               setEditingText(item.text);

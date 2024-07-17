@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FilePenIcon } from "@/components/ui/icons/file-pen-icon";
 import { TrashIcon } from "@/components/ui/icons/trash-icon";
 import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Spinner from "./spinner";
 
 const fakeItems = Array.from({ length: 9 }, (_, i) => ({ id: i + 1 }));
@@ -48,35 +49,66 @@ const ItemSkeleton = () => {
     </div>
   );
 };
+
+const SortBySkeleton = () => {
+  return (
+    <div className="flex flex-col gap-6 p-6 bg-background rounded-b-lg shadow-md">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 gap-6">
+          <div>
+            <label
+              htmlFor="sort-by"
+              className="block mb-2 text-sm font-medium text-foreground"
+            >
+              Sort by:
+            </label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder={<Spinner />} />
+              </SelectTrigger>
+            </Select>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const HeaderSkeleton = () => {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex flex-col">
+        <h1 className="text-2xl font-bold">Hello User</h1>
+        <h2>Server has an artificial delay of 2 seconds</h2>
+        <p>{`await new Promise((res) => setTimeout(res, 2000)); on top of every action`}</p>
+        <p>Enjoy the lag!</p>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <form className="flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Add new item"
+            className="max-w-[200px] sm:max-w-[300px] transition-colors duration-300 focus:bg-muted"
+            disabled={true}
+          />
+          <Button
+            size="sm"
+            className="transition-colors duration-300"
+            disabled={true}
+          >
+            Add
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
+};
 export default function SkeletonList() {
   return (
     <div className="flex flex-col gap-8 p-6 sm:p-8">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-bold">Hello User</h1>
-          <h2>Server has an artificial delay of 2 seconds</h2>
-          <p>{`await new Promise((res) => setTimeout(res, 2000)); on top of every action`}</p>
-          <p>Enjoy the lag!</p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <form className="flex items-center gap-2">
-            <Input
-              type="text"
-              placeholder="Add new item"
-              className="max-w-[200px] sm:max-w-[300px] transition-colors duration-300 focus:bg-muted"
-              disabled={true}
-            />
-            <Button
-              size="sm"
-              className="transition-colors duration-300"
-              disabled={true}
-            >
-              Add
-            </Button>
-          </form>
-        </div>
-      </div>
+      <HeaderSkeleton />
+      <SortBySkeleton />
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 auto-rows-min">
         {fakeItems.map((item, index) => (
           <ItemSkeleton key={item.id} />
