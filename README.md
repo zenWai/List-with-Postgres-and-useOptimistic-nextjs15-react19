@@ -4,6 +4,8 @@ I kinda overengineered a bit ¯\_(ツ)_/¯
 
 The goal of this app is to create an experience that simulates a client-side application while saving and updating data in the background using a PostgreSQL database on a server that is lagging.
 
+https://nextjs15-react19-list-with-useoptimistic.vercel.app/
+
 # Key Features
 <ul>
   <li>
