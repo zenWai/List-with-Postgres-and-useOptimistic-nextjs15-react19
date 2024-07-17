@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { FilePenIcon } from "@/components/ui/icons/file-pen-icon";
 import { TrashIcon } from "@/components/ui/icons/trash-icon";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import Spinner from "./spinner";
 
 const fakeItems = Array.from({ length: 9 }, (_, i) => ({ id: i + 1 }));
@@ -80,6 +82,13 @@ const HeaderSkeleton = () => {
       <div className="flex flex-col">
         <h1 className="text-2xl font-bold">Hello User</h1>
         <h2>Server has an artificial delay of 2 seconds</h2>
+        <div className="inline-flex">
+          <div className="flex items-center space-x-2">
+            <Switch id="delayEnabled" checked={true} />
+            <Label htmlFor="delayEnabled">Delay Enabled?</Label>
+          </div>
+          <p className="mx-4 text-green-600">Enabled</p>
+        </div>
         <p>{`await new Promise((res) => setTimeout(res, 2000)); on top of every action`}</p>
         <p>Enjoy the lag!</p>
       </div>

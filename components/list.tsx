@@ -1,21 +1,42 @@
 "use client";
+import { DelayEnabledSwitch } from "@/components/delay-enabled-switch";
 import { ItemOfList } from "@/components/item-of-list";
 import { SortSelect } from "@/components/sort-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCallback, useOptimistic, useState, useTransition } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import {
+  Suspense,
+  useCallback,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
 import { deleteAction, saveAction, updateAction } from "@/app/actions";
 import { toast } from "sonner";
 
 type ListProps = {
   items: FormattedItem[];
   user: User;
+  isDelayEnabled: boolean;
 };
 
-export default function List({ items, user }: ListProps) {
+export default function List({ items, user, isDelayEnabled }: ListProps) {
   const [isPending, startTransition] = useTransition();
   const [editingItem, setEditingItem] = useState<FormattedItem | null>();
   const [editingText, setEditingText] = useState<string>("");
+  const [delayEnabled, setDelayEnabled] = useState(isDelayEnabled);
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleDelayEnabledChange = useCallback(() => {
+    setDelayEnabled((prev) => !prev);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("delay", (!delayEnabled).toString());
+    router.push(pathname + "?" + params.toString(), { scroll: false });
+  },[delayEnabled]);
 
   const [optimisticItems, setOptimisticItems] = useOptimistic(
     items || [],
@@ -61,7 +82,7 @@ export default function List({ items, user }: ListProps) {
       created_at: "",
     };
     setOptimisticItems({ action: "add", item: optimisticItem });
-    const result = await saveAction(formData, user.id);
+    const result = await saveAction(formData, user.id, delayEnabled);
     if (result.success) {
       toast.success(`( ${newItem.toString()} ) added successfully 👍`);
     } else {
@@ -82,7 +103,7 @@ export default function List({ items, user }: ListProps) {
       };
       setOptimisticItems({ action: "delete", item: optimisticItem });
     });
-    const result = await deleteAction(id, user.id);
+    const result = await deleteAction(id, user.id, delayEnabled);
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -107,7 +128,7 @@ export default function List({ items, user }: ListProps) {
       setOptimisticItems({ action: "update", item: optimisticItem });
     });
 
-    const result = await updateAction(item.id, formData, user.id);
+    const result = await updateAction(item.id, formData, user.id, delayEnabled);
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -117,6 +138,7 @@ export default function List({ items, user }: ListProps) {
     setEditingItem(null);
     setEditingText("");
   }
+
   //const updateActionWithId = (id:number) => updateAction.bind(null, id);
 
   const handleSort = useCallback(
@@ -144,6 +166,15 @@ export default function List({ items, user }: ListProps) {
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Hello User {user.name}</h1>
           <h2>Server has an artificial delay of 2 seconds</h2>
+          <div className="inline-flex">
+            <DelayEnabledSwitch
+              delayEnabled={delayEnabled}
+              onDelayEnabledChange={handleDelayEnabledChange}
+            />
+            {searchParams.get("delay") !== "false" && (
+              <p className="mx-4 text-green-600">Enabled</p>
+            )}
+          </div>
           <p>{`await new Promise((res) => setTimeout(res, 2000)); on top of every action`}</p>
           <p>Enjoy the lag!</p>
         </div>
@@ -166,7 +197,11 @@ export default function List({ items, user }: ListProps) {
           </form>
         </div>
       </div>
-      <SortSelect onSort={handleSort} />
+      <div>
+        <Suspense fallback={<p>sort</p>}>
+          <SortSelect onSort={handleSort} />
+        </Suspense>
+      </div>
       {!optimisticItems?.length && (
         <div className="flex flex-center justify-center contain-content bg-gray-600/15 mx-auto text-5xl text-green-700 py-2 px-2">
           No items available, please Add some items

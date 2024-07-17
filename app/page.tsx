@@ -1,8 +1,6 @@
-import Loading from "@/app/loading";
 import { getItems } from "@/app/db";
 import List from "@/components/list";
 import { cookies } from "next/headers";
-import { Suspense } from "react";
 import { formatItems } from "@/utils/formatItemsData";
 
 export default async function HomePage({
@@ -19,14 +17,13 @@ export default async function HomePage({
       </div>
     );
 
-  const { items, user } = await getItems(userId);
+  const delay = searchParams.delay !== "false";
+  const { items, user } = await getItems(userId, delay);
   const formattedItems = await formatItems(items, searchParams);
 
   return (
     <>
-      <Suspense fallback={<Loading />}>
-        <List items={formattedItems} user={user} />
-      </Suspense>
+        <List items={formattedItems} user={user} isDelayEnabled={delay}/>
     </>
   );
 }

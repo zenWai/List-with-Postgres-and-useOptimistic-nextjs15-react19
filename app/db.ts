@@ -1,3 +1,4 @@
+import { fakeItems } from "@/utils/fakeItemsData";
 import { uuidValidateV4 } from "@/utils/uuidValidate";
 import postgres from "postgres";
 
@@ -46,6 +47,12 @@ async function createNewUser(userId: string): Promise<string> {
   const userName = `${count + 1}`;
   await sql`INSERT INTO users (id, name)
             VALUES (${userId}, ${userName})`;
+  // Insert fake items into the itemslist table for the new user
+  await sql.begin(async (sql) => {
+    for (const item of fakeItems) {
+      await sql`INSERT INTO itemslist (user_id, text, created_at) VALUES (${userId}, ${item.text}, ${item.created_at})`;
+    }
+  });
   return userId; //userId or (possibly) the new userId
 }
 
@@ -78,9 +85,9 @@ async function getUser(userId: string) {
   }
 }
 
-async function getItemsFromDB(userId: string): Promise<Item[]> {
+async function getItemsFromDB(userId: string, delay = true): Promise<Item[]> {
   try {
-    await new Promise((res) => setTimeout(res, 2000));
+    if(delay) await new Promise((res) => setTimeout(res, 2000));
     return await sql<Item[]>`
         SELECT id, text, created_at
         FROM itemslist
@@ -93,6 +100,7 @@ async function getItemsFromDB(userId: string): Promise<Item[]> {
 
 export async function getItems(
   userId: string,
+  delay: boolean
 ): Promise<{ items: Item[]; user: User }> {
   const userIdExists = await ensureUserExists(userId);
 
@@ -101,7 +109,7 @@ export async function getItems(
   }
 
   const [items, user] = await Promise.all([
-    getItemsFromDB(userId),
+    getItemsFromDB(userId, delay),
     getUser(userId),
   ]);
 
