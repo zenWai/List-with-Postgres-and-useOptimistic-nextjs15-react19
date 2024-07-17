@@ -33,12 +33,13 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const handleDelayEnabledChange = useCallback(() => {
+  const handleDelayEnabledChange = () => {
+    //console.log('hi from delay')
     setDelayEnabled((prev) => !prev);
     const params = new URLSearchParams(searchParams.toString());
     params.set("delay", (!delayEnabled).toString());
     router.push(pathname + "?" + params.toString(), { scroll: false });
-  }, [delayEnabled]);
+  }
 
   const [optimisticItems, setOptimisticItems] = useOptimistic(
     items || [],
@@ -86,7 +87,6 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
     const result = await saveAction(formData, user.id, delayEnabled);
     if (result.success) {
       toast.success(`( ${newItem.toString()} ) added successfully 👍`);
-      //TODO: Bg Color Change works for consequent adding after the first
       setRecentlyUpdated(result.savedItem?.toString() ?? "");
       setTimeout(() => setRecentlyUpdated(""), 5000);
     } else {
@@ -147,6 +147,7 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
 
   const handleSort = useCallback(
     ({ sortByTerm }: { sortByTerm: string }) => {
+      //console.log('hi from handlesort')
       startTransition(() => {
         switch (sortByTerm) {
           case "a-z":

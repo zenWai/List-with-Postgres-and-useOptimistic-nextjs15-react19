@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect} from "react";
 import {
   ReadonlyURLSearchParams,
   usePathname,
@@ -51,8 +51,9 @@ export function SortSelect({
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
   // useCallback probably not necessary since we are in react 19
-  const updateSearchParams = useCallback(
+  const updateSearchParams =
     (name: string, value: string) => {
+      //console.log("hi from updatesearch")
       const originalSearchParams = new URLSearchParams(searchParams.toString());
       originalSearchParams.set(name, value);
       const newUrl = createUrl(pathname, originalSearchParams);
@@ -64,9 +65,7 @@ export function SortSelect({
          */
       }
       //router.push(`?${params.toString()}`, {scroll:false});
-    },
-    [searchParams],
-  );
+    }
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-background rounded-b-lg shadow-md">
