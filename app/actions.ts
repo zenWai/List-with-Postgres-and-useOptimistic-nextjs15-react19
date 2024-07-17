@@ -37,7 +37,7 @@ export async function saveAction(
   userId: string,
   delay = true,
 ): Promise<ItemsActionsResult> {
-  if(delay) await new Promise((res) => setTimeout(res, 2000));
+  if (delay) await new Promise((res) => setTimeout(res, 2000));
 
   // validate data
   const text = formData.get("item");
@@ -74,7 +74,7 @@ export async function deleteAction(
   userId: string,
   delay = true,
 ): Promise<ItemsActionsResult> {
-  if(delay) await new Promise((res) => setTimeout(res, 2000));
+  if (delay) await new Promise((res) => setTimeout(res, 2000));
 
   // validate data
   const data = { id, userId };
@@ -116,7 +116,7 @@ export async function updateAction(
   userId: string,
   delay = true,
 ): Promise<ItemsActionsResult> {
-  if(delay) await new Promise((res) => setTimeout(res, 2000));
+  if (delay) await new Promise((res) => setTimeout(res, 2000));
 
   // validate data
   const text = formData.get("updateText");

@@ -50,7 +50,8 @@ export async function formatItems(
   // Handle sorting options
   if (sortByTerm) {
     formattedItems = sortBy(formattedItems, sortByTerm) ?? formattedItems;
-  } else {// default sort by "newest"
+  } else {
+    // default sort by "newest"
     formattedItems = sortBy(formattedItems, "newest") ?? formattedItems;
   }
 

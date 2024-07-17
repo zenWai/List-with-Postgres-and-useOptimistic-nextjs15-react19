@@ -23,7 +23,7 @@ export default async function HomePage({
 
   return (
     <>
-        <List items={formattedItems} user={user} isDelayEnabled={delay}/>
+      <List items={formattedItems} user={user} isDelayEnabled={delay} />
     </>
   );
 }

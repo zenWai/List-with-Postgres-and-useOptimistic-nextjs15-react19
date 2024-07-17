@@ -87,7 +87,7 @@ async function getUser(userId: string) {
 
 async function getItemsFromDB(userId: string, delay = true): Promise<Item[]> {
   try {
-    if(delay) await new Promise((res) => setTimeout(res, 2000));
+    if (delay) await new Promise((res) => setTimeout(res, 2000));
     return await sql<Item[]>`
         SELECT id, text, created_at
         FROM itemslist
@@ -100,7 +100,7 @@ async function getItemsFromDB(userId: string, delay = true): Promise<Item[]> {
 
 export async function getItems(
   userId: string,
-  delay: boolean
+  delay: boolean,
 ): Promise<{ items: Item[]; user: User }> {
   const userIdExists = await ensureUserExists(userId);
 

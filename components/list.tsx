@@ -36,7 +36,7 @@ export default function List({ items, user, isDelayEnabled }: ListProps) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("delay", (!delayEnabled).toString());
     router.push(pathname + "?" + params.toString(), { scroll: false });
-  },[delayEnabled]);
+  }, [delayEnabled]);
 
   const [optimisticItems, setOptimisticItems] = useOptimistic(
     items || [],
