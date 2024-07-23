@@ -9,35 +9,35 @@ https://nextjs15-react19-list-with-useoptimistic.vercel.app/
 # Key Features
 <ul>
   <li>
-    🚀 <strong>useOptimistic</strong> to update the UI immediately and without refs leveraging the React 19 capability, providing a smooth user experience even when the server is lagging.
+    🚀 <strong>useOptimistic</strong>
   </li>
   <li>
-    🔄 <strong>startTransition</strong> to manage state transitions.
+    🔄 <strong>startTransition</strong>
   </li>
   <li>
-    🌐 <strong>Next.js server actions</strong> to handle database interactions coming from the client-side.
+    🌐 <strong>Next.js server actions</strong>
   </li>
   <li>
-    👤 Each user gets their own account with a unique list of items.
+    👤 Unique accounts with middleware cookie handling.
   </li>
   <li>
-    ⚡ Immediate feedback on actions (like adding, updating, or deleting items) through optimistic UI updates.
+    ⚡ Immediate feedback on actions
   </li>
   <li>
-    🔐 <strong>Next.js middleware</strong> for cookie handling, new user creation, and edge cases where the user was not found.
+    🔐 <strong>Next.js middleware</strong> for cookie handling, new user creation, and edge cases
   </li>
   <li>
-    🛠️ <strong>PostgreSQL</strong> for data persistence, ensuring that all changes are saved and updated in the database.
+    🛠️ <strong>PostgreSQL</strong> as DB
   </li>
   <li>Experimental React 19 compiler.</li>
   <li>
-    🔍 Sorting and Filtering with <strong>useOptimistic</strong> and server-side for no content-flickering on a page refresh.
+    🔍 Sorting and Filtering with <strong>useOptimistic</strong>
   </li>
   <li>
-    🛡️ Error handling throughout the application.
+    🛡️ Error handling
   </li>
   <li>
-    📏 Zod for schema and data validation.
+    📏 Zod
   </li>
 </ul>
 
