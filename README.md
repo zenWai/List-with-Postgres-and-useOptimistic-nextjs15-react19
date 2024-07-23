@@ -6,15 +6,6 @@ The goal of this app is to create an experience that simulates a client-side app
 
 https://nextjs15-react19-list-with-useoptimistic.vercel.app/
 
-As per my PR #9 I got the new react19 compiler, it actually fixed one bug i was having trouble with.
-See PR https://github.com/zenWai/List-with-Postgres-and-useOptimistic-nextjs15-react19/pull/9
-
-### Build before the react19 compiler
-https://list-with-postgres-and-use-optimist-git-2b26c4-my-team-00a21fbb.vercel.app?_vercel_share=A4CEnXoBDzHQkCoOG70g3arr0GMsHlij
-
-### Build after the react19 compiler - most recent
-https://list-with-postgres-and-use-optimist-git-9c0152-my-team-00a21fbb.vercel.app?_vercel_share=mBLzPPIWZAqkIBGzLvx6Cfo1AQuX7q6X
-
 # Key Features
 <ul>
   <li>
